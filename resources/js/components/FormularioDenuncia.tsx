@@ -14,6 +14,7 @@ const FormularioDenuncia: React.FC = () => {
     descricao: '',
     localizacao: '',
     contato: '',
+    status: 'pendente',
     arquivos: [] as File[],
   });
 
