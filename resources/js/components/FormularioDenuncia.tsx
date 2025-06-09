@@ -28,7 +28,7 @@ const FormularioDenuncia: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    form.post(route('denuncias.store'), {
+    form.post(route('denuncias.publicas.store'), {
       preserveScroll: true,
       forceFormData: true,
       onSuccess: () => {

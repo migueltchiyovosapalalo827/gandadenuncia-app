@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DenunciaController;
+use App\Http\Controllers\DenunciaPublicaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 
@@ -71,8 +72,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/relatorios', [DenunciaController::class, 'reports'])->name('relatorios');
 });
 
-// API Routes para denúncias
-Route::post('/denuncias', [DenunciaController::class, 'store'])->name('denuncias.store');
+
+Route::post('/denuncias-publicas', [DenunciaPublicaController::class, 'store'])->name('denuncias.publicas.store');
 
 Route::middleware(['auth'])->group(function () {
     Route::put('/denuncias/{denuncia}', [DenunciaController::class, 'update'])->name('denuncias.update');

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Denuncia;
 use Inertia\Inertia;
+use App\Models\Denuncia;
+use Illuminate\Http\Request;
 
 class DenunciaPublicaController extends Controller
 {
@@ -36,5 +37,21 @@ class DenunciaPublicaController extends Controller
         return Inertia::render('DetalhesDenunciaPublica', [
             'denuncia' => $denuncia
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'localizacao' => 'required|string|max:255',
+            'contato' => 'nullable|string|max:255',
+            'status' => 'required|in:pendente,em_analise,resolvida,arquivada',
+        ]);
+
+        $denuncia = Denuncia::create($validated);
+
+        return redirect()->route('denuncias.sent')
+            ->with('success', 'Denúncia enviada com sucesso!');
     }
 } 

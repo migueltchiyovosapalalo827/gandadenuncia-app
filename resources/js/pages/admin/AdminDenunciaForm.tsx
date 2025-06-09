@@ -28,7 +28,7 @@ const AdminDenunciaForm = () => {
     e.preventDefault();
     
     if (isEditing) {
-      form.put(route('admin.denuncias.update', denuncia.id), {
+      form.put(route('admin.denuncias.update', { id: denuncia.id }), {
         preserveScroll: true,
         onSuccess: () => {
           window.location.href = route('admin.denuncias.index');
