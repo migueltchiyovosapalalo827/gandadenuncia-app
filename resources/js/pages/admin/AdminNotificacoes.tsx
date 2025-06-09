@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import AdminHeader from '@/components/admin/AdminHeader';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks/useAuth';
-import api from '@/services/api';
-import { toast } from 'sonner';
+import { usePage } from '@inertiajs/react';
+import { PageProps as InertiaPageProps } from '@inertiajs/core';
 
 interface Notificacao {
   id: number;
@@ -12,76 +11,35 @@ interface Notificacao {
   lida: boolean;
 }
 
+interface PageProps extends InertiaPageProps {
+  notificacoes: Notificacao[];
+}
+
 const AdminNotificacoes = () => {
-  const { usuario } = useAuth();
-  const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { notificacoes = [] } = usePage<PageProps>().props;
 
-  useEffect(() => {
-    const carregarNotificacoes = async () => {
-      try {
-        const response = await api.get(`/notificacoes/usuario/${usuario?.id}`);
-        setNotificacoes(response.data);
-      } catch (error) {
-        toast.error('Erro ao carregar notificações');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (usuario?.id) {
-      carregarNotificacoes();
-    }
-  }, [usuario?.id]);
-
-  const marcarComoLida = async (id: number) => {
-    try {
-      await api.patch(`/notificacoes/${id}/marcar-como-lida`);
-      setNotificacoes(notificacoes.map(n => 
-        n.id === id ? { ...n, lida: true } : n
-      ));
-      toast.success('Notificação marcada como lida');
-    } catch (error) {
-      toast.error('Erro ao marcar notificação como lida');
-    }
-  };
-
-  const marcarTodasComoLidas = async () => {
-    try {
-      await api.patch(`/notificacoes/usuario/${usuario?.id}/marcar-todas-como-lidas`);
-      setNotificacoes(notificacoes.map(n => ({ ...n, lida: true })));
-      toast.success('Todas as notificações foram marcadas como lidas');
-    } catch (error) {
-      toast.error('Erro ao marcar notificações como lidas');
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <AdminHeader />
-        <main className="flex-grow p-6">
-          <div className="text-center py-12">Carregando...</div>
-        </main>
-      </div>
-    );
-  }
+  // As funções de marcar como lida podem ser feitas via Inertia.post/patch
+  // Exemplo:
+  // Inertia.patch(route('notificacoes.marcarComoLida', { id: notificacao.id }))
 
   return (
     <div className="min-h-screen flex flex-col">
       <AdminHeader />
-      
       <main className="flex-grow p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Notificações</h1>
             {notificacoes.some(n => !n.lida) && (
-              <Button onClick={marcarTodasComoLidas}>
+              <Button
+                onClick={() => {
+                  // Exemplo de chamada Inertia para marcar todas como lidas
+                  // Inertia.patch(route('notificacoes.marcarTodasComoLidas', { usuario: usuario?.id }))
+                }}
+              >
                 Marcar todas como lidas
               </Button>
             )}
           </div>
-          
           <div className="space-y-4">
             {notificacoes.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
@@ -106,7 +64,10 @@ const AdminNotificacoes = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => marcarComoLida(notificacao.id)}
+                        onClick={() => {
+                          // Exemplo de chamada Inertia para marcar como lida
+                          // Inertia.patch(route('notificacoes.marcarComoLida', { id: notificacao.id }))
+                        }}
                       >
                         Marcar como lida
                       </Button>
